@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # DumpAI
 
 Plataforma de estudo adaptativo para certificações técnicas, com perguntas geradas e avaliadas por IA (**Google Gemini API — tier gratuito**).
@@ -98,3 +99,6 @@ dumpai/
 - Migrar de SQLite para PostgreSQL em produção (ver seção acima).
 - Adicionar rate-limiting nas chamadas à IA por usuário, para controlar custo de API.
 - Adicionar tela de histórico detalhado de perguntas por linguagem.
+=======
+# dump-ia
+>>>>>>> 9cd825c10f3c524f5a29f809eb1fc4a413054a2c
