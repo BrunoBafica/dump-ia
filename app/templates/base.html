@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}DumpAI{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">dump<span style="color:var(--accent)">ai</span><span class="cursor"></span></div>
+    <div class="topbar-right">
+      {% if request.session.get('username') %}
+        {{ request.session.get('username') }} &nbsp;·&nbsp; <a href="/logout">sair</a>
+      {% endif %}
+    </div>
+  </div>
+  {% block content %}{% endblock %}
+</body>
+</html>

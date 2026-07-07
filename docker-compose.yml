@@ -1,0 +1,30 @@
+services:
+  dumpai:
+    build: .
+    container_name: dumpai
+    ports:
+      - "8000:8000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
+      - SESSION_SECRET=${SESSION_SECRET:-troque-este-valor}
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./data/dumpai.db}
+      - QUESTIONS_PER_EVALUATION=${QUESTIONS_PER_EVALUATION:-5}
+    volumes:
+      - ./data:/code/data
+    restart: unless-stopped
+
+  # --- Exemplo de migração futura para PostgreSQL ---
+  # db:
+  #   image: postgres:16
+  #   environment:
+  #     POSTGRES_USER: dumpai
+  #     POSTGRES_PASSWORD: dumpai
+  #     POSTGRES_DB: dumpai
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #
+  # volumes:
+  #   pgdata:

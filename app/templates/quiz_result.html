@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Resultado · DumpAI{% endblock %}
+{% block content %}
+<div class="container-narrow">
+  <div class="panel">
+    <p class="subtitle" style="margin-bottom: 4px;"><a href="/dashboard">&larr; voltar ao dashboard</a></p>
+    <h1>{{ cert.label }}</h1>
+
+    <div class="result-banner {% if is_correct %}correct{% else %}wrong{% endif %}">
+      {% if is_correct %}✔ Correto{% else %}✘ Incorreto{% endif %}
+      {% if score is not none %} — pontuação: {{ score|round(0) }}/100{% endif %}
+    </div>
+
+    <div class="question-text">{{ question.question }}</div>
+
+    <div class="feedback-box">
+      <b style="color: var(--text)">Sua resposta:</b> {{ user_answer }}<br><br>
+      <b style="color: var(--text)">Feedback da IA:</b> {{ feedback }}
+    </div>
+
+    {% if level_evaluation %}
+      {% if level_evaluation.error %}
+        <div class="alert alert-error">Não foi possível reavaliar o nível: {{ level_evaluation.error }}</div>
+      {% elif level_evaluation.decision != "maintain" %}
+        <div class="level-change-banner">
+          {% if level_evaluation.decision == "promote" %}
+            🚀 Parabéns! Você foi promovido para <b>{{ level_labels[level_evaluation.new_level] }}</b>.
+          {% else %}
+            ⚠ Seu nível foi ajustado para <b>{{ level_labels[level_evaluation.new_level] }}</b> para reforçar a base.
+          {% endif %}
+          <br><span style="color: var(--text-dim); font-weight: 400;">{{ level_evaluation.reasoning }}</span>
+        </div>
+      {% else %}
+        <div class="reasoning-box">
+          <b style="color: var(--text)">Avaliação de nível:</b> mantido em {{ level_labels[level_evaluation.new_level] }}. {{ level_evaluation.reasoning }}
+        </div>
+      {% endif %}
+    {% endif %}
+
+    <div class="actions">
+      <a href="/quiz/{{ language }}" class="btn btn-primary">Próxima pergunta</a>
+      <a href="/dashboard" class="btn btn-outline">Voltar ao dashboard</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

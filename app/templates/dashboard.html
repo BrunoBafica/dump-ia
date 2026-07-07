@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · DumpAI{% endblock %}
+{% block content %}
+<div class="container-wide">
+  <h1>Seus dumps</h1>
+  <p class="subtitle">Escolha uma certificação para continuar praticando. O nível evolui conforme seu desempenho.</p>
+
+  <div class="lang-grid">
+    {% for lang in languages %}
+    <div class="lang-card">
+      <div class="lang-card-header">
+        <div class="lang-name">{{ lang.label }}</div>
+      </div>
+      <div class="cert-name"><a href="{{ lang.cert_url }}" target="_blank" rel="noopener">{{ lang.cert_name }}</a></div>
+
+      <div class="pipeline">
+        {% for lvl in levels %}
+        <div class="stage {% if loop.index0 < lang.level_index %}done{% elif loop.index0 == lang.level_index %}current{% endif %}"></div>
+        {% endfor %}
+      </div>
+      <div class="pipeline-labels">
+        {% for lvl in levels %}
+        <span class="{% if loop.index0 == lang.level_index %}active{% endif %}">{{ level_labels[lvl] }}</span>
+        {% endfor %}
+      </div>
+
+      <div class="stat-row">
+        <span>Nível atual</span>
+        <b>{{ lang.current_level_label }}</b>
+      </div>
+      <div class="stat-row">
+        <span>Perguntas respondidas</span>
+        <b>{{ lang.total_answered }}</b>
+      </div>
+      {% if lang.accuracy is not none %}
+      <div class="stat-row">
+        <span>Taxa de acerto</span>
+        <b>{{ lang.accuracy }}%</b>
+      </div>
+      {% endif %}
+
+      {% if lang.last_reasoning %}
+      <div class="reasoning-box">
+        <b style="color: var(--text)">Última avaliação da IA:</b> {{ lang.last_reasoning }}
+      </div>
+      {% endif %}
+
+      <a href="/quiz/{{ lang.key }}" class="btn btn-primary" style="margin-top: 10px;">Praticar {{ lang.label }}</a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

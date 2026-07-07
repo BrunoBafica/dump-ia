@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Entrar · DumpAI{% endblock %}
+{% block content %}
+<div class="container-narrow">
+  <div class="panel">
+    <h1>Entrar</h1>
+    <p class="subtitle">Continue seus estudos de certificação.</p>
+
+    {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+    <form method="post" action="/login">
+      <label for="username">Usuário</label>
+      <input type="text" id="username" name="username" required autofocus>
+
+      <label for="password">Senha</label>
+      <input type="password" id="password" name="password" required>
+
+      <div style="margin-top: 24px;">
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+      </div>
+    </form>
+
+    <div class="form-footer">
+      Ainda não tem conta? <a href="/register">Cadastre-se</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

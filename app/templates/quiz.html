@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ cert.label }} · DumpAI{% endblock %}
+{% block content %}
+<div class="container-narrow">
+  <div class="panel">
+    <p class="subtitle" style="margin-bottom: 4px;"><a href="/dashboard">&larr; voltar ao dashboard</a></p>
+    <h1>{{ cert.label }}</h1>
+
+    {% if error %}
+      <div class="alert alert-error">{{ error }}</div>
+      <a href="/quiz/{{ language }}" class="btn btn-outline" style="margin-top: 16px;">Tentar novamente</a>
+    {% else %}
+      <div class="quiz-meta">
+        {{ cert.cert_name }}
+        <span class="level-tag">{{ level_label }}</span>
+      </div>
+
+      {% if question.topic %}
+      <div class="quiz-meta" style="margin-top:-6px; margin-bottom: 16px;">tópico: {{ question.topic }}</div>
+      {% endif %}
+
+      <div class="question-text">{{ question.question }}</div>
+
+      <form method="post" action="/quiz/{{ language }}/answer">
+        {% if question.type == "multiple_choice" %}
+          <div class="options">
+            {% for opt in question.options %}
+            <label class="option-label">
+              <input type="radio" name="answer" value="{{ opt }}" required>
+              {{ opt }}
+            </label>
+            {% endfor %}
+          </div>
+        {% else %}
+          <textarea name="answer" placeholder="Escreva sua resposta aqui..." required></textarea>
+        {% endif %}
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary">Enviar resposta</button>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
