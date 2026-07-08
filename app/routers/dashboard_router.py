@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.config import CERTIFICATIONS, LEVELS, LEVEL_LABELS
+from app.config import settings, CERTIFICATIONS, LEVELS, LEVEL_LABELS
 from app.dependencies import get_current_user
 from app.models.models import User
 from app.services.progress_service import get_or_create_progress
@@ -53,5 +53,6 @@ def dashboard(
             "languages": languages_data,
             "levels": LEVELS,
             "level_labels": LEVEL_LABELS,
+            "email_configured": settings.EMAIL_CONFIGURED,
         },
     )

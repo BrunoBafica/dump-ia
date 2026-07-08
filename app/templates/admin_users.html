@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Painel Admin · DumpAI{% endblock %}
+{% block content %}
+<div class="container-wide">
+  <h1>Painel Admin</h1>
+  <p class="subtitle">Visão geral de todos os usuários cadastrados.</p>
+
+  <div class="panel" style="margin-top: 20px; overflow-x: auto;">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Usuário</th>
+          <th>E-mail</th>
+          <th>Celular</th>
+          <th>Status</th>
+          <th>Perguntas respondidas</th>
+          <th>Cadastrado em</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>
+            {{ u.username }}
+            {% if u.is_admin %}<span class="badge badge-admin">admin</span>{% endif %}
+          </td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.phone_number or "—" }}</td>
+          <td>
+            {% if u.email_verified %}
+              <span class="badge badge-ok">e-mail confirmado</span>
+            {% else %}
+              <span class="badge badge-warn">e-mail pendente</span>
+            {% endif %}
+            {% if u.must_change_password %}
+              <span class="badge badge-warn">troca de senha pendente</span>
+            {% endif %}
+          </td>
+          <td>{{ u.total_answered }}</td>
+          <td>{{ u.created_at.strftime("%d/%m/%Y") if u.created_at else "—" }}</td>
+          <td><a href="/admin/users/{{ u.id }}">ver detalhes &rarr;</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

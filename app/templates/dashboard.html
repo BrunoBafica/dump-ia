@@ -2,6 +2,21 @@
 {% block title %}Dashboard · DumpAI{% endblock %}
 {% block content %}
 <div class="container-wide">
+  {% if not email_configured %}
+  <div class="alert alert-error" style="margin-bottom: 20px;">
+    ⚠ <b>E-mail não configurado neste servidor.</b> Confirmação de cadastro e
+    recuperação de senha estão indisponíveis até o SMTP ser configurado no <code>.env</code>
+    (veja o README, seção "Configurando o envio de e-mails").
+  </div>
+  {% elif user and not user.email_verified %}
+  <div class="alert alert-error" style="display:flex; align-items:center; justify-content:space-between; gap: 16px; margin-bottom: 20px;">
+    <span>Confirme seu e-mail ({{ user.email }}) para garantir o acesso total à sua conta.</span>
+    <form method="post" action="/account/resend-verification" style="margin:0;">
+      <button type="submit" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.8rem;">Reenviar e-mail</button>
+    </form>
+  </div>
+  {% endif %}
+
   <h1>Seus dumps</h1>
   <p class="subtitle">Escolha uma certificação para continuar praticando. O nível evolui conforme seu desempenho.</p>
 

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Confirmação de e-mail · DumpAI{% endblock %}
+{% block content %}
+<div class="container-narrow">
+  <div class="panel">
+    {% if success %}
+      <h1>E-mail confirmado ✔</h1>
+      <p class="subtitle">Sua conta está totalmente ativada. Bons estudos!</p>
+    {% else %}
+      <h1>Link inválido ou expirado</h1>
+      <p class="subtitle">
+        Esse link de confirmação não é mais válido. Faça login e peça um novo
+        em "Minha conta".
+      </p>
+    {% endif %}
+    <a href="/login" class="btn btn-primary btn-block">Ir para o login</a>
+  </div>
+</div>
+{% endblock %}

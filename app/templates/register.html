@@ -8,12 +8,28 @@
 
     {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
 
+    {% if not email_configured %}
+      <div class="alert alert-error">
+        ⚠ O envio de e-mail ainda não está configurado neste servidor. Você pode
+        criar a conta normalmente, mas <b>não vai receber o e-mail de confirmação</b>,
+        e a recuperação de senha ficará indisponível até isso ser configurado.
+      </div>
+    {% endif %}
+
     <form method="post" action="/register">
       <label for="username">Usuário</label>
       <input type="text" id="username" name="username" required autofocus>
 
       <label for="email">E-mail</label>
       <input type="email" id="email" name="email" required>
+      {% if email_configured %}
+      <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">
+        Enviaremos um e-mail de confirmação para este endereço.
+      </div>
+      {% endif %}
+
+      <label for="phone_number">Celular <span style="color: var(--text-dim); font-weight: 400;">(opcional)</span></label>
+      <input type="text" id="phone_number" name="phone_number" placeholder="(11) 91234-5678">
 
       <label for="password">Senha</label>
       <input type="password" id="password" name="password" required minlength="6">

@@ -7,6 +7,7 @@
     <p class="subtitle">Continue seus estudos de certificação.</p>
 
     {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+    {% if info %}<div class="alert alert-success">{{ info }}</div>{% endif %}
 
     <form method="post" action="/login">
       <label for="username">Usuário</label>
@@ -20,6 +21,9 @@
       </div>
     </form>
 
+    <div class="form-footer">
+      <a href="/forgot-password">Esqueci minha senha</a>
+    </div>
     <div class="form-footer">
       Ainda não tem conta? <a href="/register">Cadastre-se</a>
     </div>

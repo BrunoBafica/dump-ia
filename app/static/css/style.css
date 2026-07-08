@@ -265,3 +265,62 @@ textarea { min-height: 130px; resize: vertical; }
 }
 
 .actions { display: flex; gap: 12px; margin-top: 8px; }
+
+/* --- Admin --- */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.admin-table th, .admin-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.admin-table th {
+  font-family: var(--mono);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 0.03em;
+}
+.admin-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.badge-ok { background: var(--accent-soft); color: var(--accent); }
+.badge-warn { background: #2a2210; color: var(--warn); }
+.badge-admin { background: #2a1c3d; color: #c4a3f5; }
+
+.admin-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+.admin-progress-card {
+  background: #0b1220;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.82rem;
+}
+.admin-progress-card .lang { font-family: var(--mono); font-weight: 700; margin-bottom: 4px; }
+
+.temp-password-box {
+  background: var(--accent-soft);
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-align: center;
+  margin-bottom: 16px;
+}

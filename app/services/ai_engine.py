@@ -97,6 +97,10 @@ Regras:
             system_instruction=system_prompt,
             response_mime_type="application/json",
             response_schema=QuestionSchema,
+            # Desliga o "thinking" estendido do Gemini: para uma tarefa estruturada
+            # como essa, o raciocínio extra não melhora a qualidade o suficiente
+            # para justificar o tempo extra de resposta.
+            thinking_config=types.ThinkingConfig(thinking_budget=0),
         ),
     )
     data: QuestionSchema = response.parsed
@@ -134,6 +138,7 @@ Dê um feedback curto (2-4 frases), construtivo, apontando o que estava certo e 
             system_instruction=system_prompt,
             response_mime_type="application/json",
             response_schema=EvaluationSchema,
+            thinking_config=types.ThinkingConfig(thinking_budget=0),
         ),
     )
     data: EvaluationSchema = response.parsed

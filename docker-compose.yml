@@ -7,11 +7,22 @@ services:
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
-      - SESSION_SECRET=${SESSION_SECRET:-troque-este-valor}
+      - SESSION_SECRET=${SESSION_SECRET:-dev-secret-change-me}
       - DATABASE_URL=${DATABASE_URL:-sqlite:///./data/dumpai.db}
       - QUESTIONS_PER_EVALUATION=${QUESTIONS_PER_EVALUATION:-5}
+      - APP_BASE_URL=${APP_BASE_URL:-http://localhost:8000}
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - EMAIL_FROM=${EMAIL_FROM:-no-reply@dumpai.local}
+      - EMAIL_FROM_NAME=${EMAIL_FROM_NAME:-DumpAI}
     volumes:
-      - ./data:/code/data
+      # Volume NOMEADO (não uma pasta dentro do projeto): o banco vive fora
+      # do código-fonte. Um "git pull" ou até apagar a pasta do projeto e
+      # clonar de novo NÃO apaga esse volume — ele é gerenciado pelo Docker
+      # separadamente. Para ver onde ele fica fisicamente: `docker volume inspect dumpai_data`.
+      - dumpai_data:/code/data
     restart: unless-stopped
 
   # --- Exemplo de migração futura para PostgreSQL ---
@@ -28,3 +39,6 @@ services:
   #
   # volumes:
   #   pgdata:
+
+volumes:
+  dumpai_data:

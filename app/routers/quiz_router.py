@@ -1,15 +1,15 @@
 import json
 
-from fastapi import APIRouter, Request, Depends, Form
+from fastapi import APIRouter, Request, Depends, Form, BackgroundTasks
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.database import get_db, SessionLocal
 from app.config import CERTIFICATIONS, LEVEL_LABELS
 from app.dependencies import get_current_user
 from app.models.models import User
-from app.services import ai_engine
+from app.services import ai_engine, question_cache
 from app.services.progress_service import (
     get_or_create_progress,
     get_recent_history,
@@ -19,6 +19,27 @@ from app.services.progress_service import (
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+
+
+def _prefetch_next_question(user_id: int, language: str) -> None:
+    """
+    Roda em segundo plano logo depois que o usuário responde uma pergunta:
+    gera a PRÓXIMA pergunta (já considerando o nível atualizado pós-avaliação)
+    e guarda no cache, para a próxima tela carregar na hora.
+    Abre sua própria sessão de banco, já que roda fora do ciclo da requisição original.
+    """
+    db = SessionLocal()
+    try:
+        progress = get_or_create_progress(db, user_id, language)
+        history = get_recent_history(db, user_id, language)
+        question = ai_engine.generate_question(language, progress.current_level, history)
+        question_cache.set_question(user_id, language, question)
+    except Exception:
+        # Se der erro (ex: rate limit), simplesmente não deixamos nada no cache;
+        # a próxima tela vai gerar a pergunta na hora, como antes.
+        question_cache.clear_question(user_id, language)
+    finally:
+        db.close()
 
 
 @router.get("/quiz/{language}", response_class=HTMLResponse)
@@ -32,22 +53,26 @@ def new_question(
         return RedirectResponse("/dashboard", status_code=302)
 
     progress = get_or_create_progress(db, user.id, language)
-    history = get_recent_history(db, user.id, language)
 
-    try:
-        question = ai_engine.generate_question(language, progress.current_level, history)
-    except Exception as exc:
-        return templates.TemplateResponse(
-            "quiz.html",
-            {
-                "request": request,
-                "error": f"Erro ao gerar pergunta via IA: {exc}",
-                "language": language,
-                "cert": CERTIFICATIONS[language],
-                "level_label": LEVEL_LABELS[progress.current_level],
-            },
-            status_code=502,
-        )
+    # Se já tem uma pergunta pré-carregada em background, usa ela na hora
+    # (sem esperar a IA). Senão, gera na hora mesmo, como antes.
+    question = question_cache.pop_question(user.id, language)
+    if question is None:
+        history = get_recent_history(db, user.id, language)
+        try:
+            question = ai_engine.generate_question(language, progress.current_level, history)
+        except Exception as exc:
+            return templates.TemplateResponse(
+                "quiz.html",
+                {
+                    "request": request,
+                    "error": f"Erro ao gerar pergunta via IA: {exc}",
+                    "language": language,
+                    "cert": CERTIFICATIONS[language],
+                    "level_label": LEVEL_LABELS[progress.current_level],
+                },
+                status_code=502,
+            )
 
     # Guarda a pergunta pendente na sessão para conferência na hora de responder
     request.session[f"pending_{language}"] = json.dumps(question)
@@ -69,6 +94,7 @@ def new_question(
 def submit_answer(
     request: Request,
     language: str,
+    background_tasks: BackgroundTasks,
     answer: str = Form(...),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -137,6 +163,11 @@ def submit_answer(
         level_evaluation = maybe_evaluate_level(db, user.id, language)
     except Exception as exc:
         level_evaluation = {"error": str(exc)}
+
+    # Já dispara a geração da próxima pergunta em segundo plano, considerando
+    # o nível (possivelmente atualizado) — quando o usuário clicar em
+    # "Próxima pergunta", ela deve estar pronta no cache.
+    background_tasks.add_task(_prefetch_next_question, user.id, language)
 
     return templates.TemplateResponse(
         "quiz_result.html",

@@ -11,6 +11,31 @@ class Settings:
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./dumpai.db")
     QUESTIONS_PER_EVALUATION: int = int(os.getenv("QUESTIONS_PER_EVALUATION", "5"))
 
+    # URL pública onde o app está acessível (usada nos links dos e-mails)
+    APP_BASE_URL: str = os.getenv("APP_BASE_URL", "http://localhost:8000")
+
+    # SMTP para envio de e-mails (confirmação de cadastro / recuperação de senha)
+    SMTP_HOST: str = os.getenv("SMTP_HOST", "")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER: str = os.getenv("SMTP_USER", "")
+    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
+    EMAIL_FROM: str = os.getenv("EMAIL_FROM", "no-reply@dumpai.local")
+    EMAIL_FROM_NAME: str = os.getenv("EMAIL_FROM_NAME", "DumpAI")
+    SMTP_USE_TLS: bool = os.getenv("SMTP_USE_TLS", "true").lower() in ("1", "true", "yes")
+
+    # Validade dos códigos/links de verificação, em minutos
+    EMAIL_VERIFICATION_EXPIRE_MINUTES: int = 60 * 24  # 24h para confirmar cadastro
+    PASSWORD_RESET_CODE_EXPIRE_MINUTES: int = 10       # 10min para o código de recuperação
+
+    @property
+    def EMAIL_CONFIGURED(self) -> bool:
+        """
+        True só se houver o mínimo necessário para enviar e-mail de verdade.
+        Usado em todo o app para SINALIZAR (banners) e, no caso da recuperação
+        de senha, para BLOQUEAR o fluxo em vez de fingir que funcionou.
+        """
+        return bool(self.SMTP_HOST and self.SMTP_USER and self.SMTP_PASSWORD)
+
 
 settings = Settings()
 

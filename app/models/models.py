@@ -17,6 +17,25 @@ class User(Base):
     password_hash = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    # Celular: coletado no cadastro, informativo (sem verificação por SMS,
+    # que teria custo por mensagem — ver decisão registrada na conversa).
+    phone_number = Column(String(30), nullable=True)
+
+    # --- Confirmação de cadastro por e-mail ---
+    email_verified = Column(Boolean, default=False)
+    email_verification_token = Column(String(64), nullable=True)
+    email_verification_expires_at = Column(DateTime, nullable=True)
+
+    # --- Recuperação de senha (2º fator = código enviado ao e-mail) ---
+    password_reset_code = Column(String(10), nullable=True)
+    password_reset_expires_at = Column(DateTime, nullable=True)
+
+    # --- Administração ---
+    is_admin = Column(Boolean, default=False)
+    # Força a troca de senha no próximo login (usado no admin padrão admin/admin,
+    # e também quando um admin gera senha temporária para outro usuário).
+    must_change_password = Column(Boolean, default=False)
+
     progress_entries = relationship(
         "UserProgress", back_populates="user", cascade="all, delete-orphan"
     )

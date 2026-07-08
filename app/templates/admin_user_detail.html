@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}{{ user.username }} · Admin · DumpAI{% endblock %}
+{% block content %}
+<div class="container-narrow" style="max-width: 720px;">
+  <p class="subtitle" style="margin-bottom: 4px;"><a href="/admin">&larr; voltar para a lista</a></p>
+  <h1>{{ user.username }}
+    {% if user.is_admin %}<span class="badge badge-admin">admin</span>{% endif %}
+  </h1>
+  <p class="subtitle">
+    Cadastrado em {{ user.created_at.strftime("%d/%m/%Y %H:%M") if user.created_at else "—" }}
+    {% if user.email_verified %}
+      · <span class="badge badge-ok">e-mail confirmado</span>
+    {% else %}
+      · <span class="badge badge-warn">e-mail pendente</span>
+    {% endif %}
+    {% if user.must_change_password %}
+      · <span class="badge badge-warn">troca de senha pendente</span>
+    {% endif %}
+  </p>
+
+  {% if flashed_temp_password %}
+    <div class="alert alert-error">
+      <b>SMTP não configurado — copie a senha temporária agora, ela não será mostrada de novo:</b>
+    </div>
+    <div class="temp-password-box">{{ flashed_temp_password }}</div>
+  {% elif flashed_temp_password_emailed %}
+    <div class="alert alert-success">Senha temporária gerada e enviada para {{ user.email }}.</div>
+  {% endif %}
+
+  <div class="panel" style="margin-top: 16px;">
+    <h2>Progresso por certificação</h2>
+    <div class="admin-progress-grid">
+      {% for lang in languages %}
+      <div class="admin-progress-card">
+        <div class="lang">{{ lang.label }}</div>
+        <div>Nível: <b>{{ lang.current_level_label }}</b></div>
+        <div>{{ lang.total_correct }}/{{ lang.total_answered }} corretas</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <h2>Últimas perguntas respondidas</h2>
+    {% if recent_logs %}
+    <table class="admin-table" style="margin-bottom: 8px;">
+      <thead>
+        <tr><th>Quando</th><th>Linguagem</th><th>Nível</th><th>Resultado</th></tr>
+      </thead>
+      <tbody>
+        {% for log in recent_logs %}
+        <tr>
+          <td>{{ log.created_at.strftime("%d/%m %H:%M") if log.created_at else "—" }}</td>
+          <td>{{ log.language }}</td>
+          <td>{{ log.level }}</td>
+          <td>{% if log.is_correct %}<span class="badge badge-ok">certo</span>{% else %}<span class="badge badge-warn">errado</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="subtitle">Ainda não respondeu nenhuma pergunta.</p>
+    {% endif %}
+  </div>
+
+  <div class="panel" style="margin-top: 16px;">
+    <h2>Editar usuário / e-mail</h2>
+    {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+    <form method="post" action="/admin/users/{{ user.id }}/update">
+      <label for="username">Nome de usuário</label>
+      <input type="text" id="username" name="username" value="{{ user.username }}" required>
+
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" value="{{ user.email }}" required>
+      <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">
+        Trocar o e-mail marca a conta como "e-mail pendente" novamente.
+      </div>
+
+      <div style="margin-top: 20px;">
+        <button type="submit" class="btn btn-primary">Salvar alterações</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel" style="margin-top: 16px;">
+    <h2>Redefinir senha</h2>
+    <p class="subtitle">
+      Gera uma senha temporária nova e aleatória para este usuário
+      {% if email_configured %}
+        (enviada por e-mail automaticamente).
+      {% else %}
+        — como o SMTP não está configurado, ela será exibida aqui para você repassar manualmente.
+      {% endif %}
+      No próximo login, a troca de senha será obrigatória.
+    </p>
+    <form method="post" action="/admin/users/{{ user.id }}/reset-password">
+      <button type="submit" class="btn btn-outline">Gerar nova senha temporária</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
