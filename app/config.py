@@ -12,7 +12,7 @@ class Settings:
     QUESTIONS_PER_EVALUATION: int = int(os.getenv("QUESTIONS_PER_EVALUATION", "5"))
 
     # URL pública onde o app está acessível (usada nos links dos e-mails)
-    APP_BASE_URL: str = os.getenv("APP_BASE_URL", "http://localhost:8000")
+    APP_BASE_URL: str = os.getenv("APP_BASE_URL", "http://191.252.60.174:8000")
 
     # SMTP para envio de e-mails (confirmação de cadastro / recuperação de senha)
     SMTP_HOST: str = os.getenv("SMTP_HOST", "")
