@@ -9,9 +9,9 @@
     (veja o README, seção "Configurando o envio de e-mails").
   </div>
   {% elif user and not user.email_verified %}
-  <div class="alert alert-error" style="display:flex; align-items:center; justify-content:space-between; gap: 16px; margin-bottom: 20px;">
+  <div class="alert alert-error banner-flex" style="margin-bottom: 20px;">
     <span>Confirme seu e-mail ({{ user.email }}) para garantir o acesso total à sua conta.</span>
-    <form method="post" action="/account/resend-verification" style="margin:0;">
+    <form method="post" action="/account/resend-verification" class="banner-flex-form">
       <button type="submit" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.8rem;">Reenviar e-mail</button>
     </form>
   </div>

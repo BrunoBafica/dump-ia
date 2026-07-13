@@ -15,13 +15,15 @@
     </a>
     <div class="topbar-right">
       {% if request.session.get('username') %}
-      {{ request.session.get('username') }} &nbsp;·&nbsp;
-      <a href="/dashboard">Início</a> &nbsp;·&nbsp;
+      <nav class="topbar-nav">
+        <span class="topbar-user">{{ request.session.get('username') }}</span>
+        <a href="/dashboard">Início</a>
         {% if request.session.get('is_admin') %}
-          <a href="/admin">Painel Admin</a> &nbsp;·&nbsp;
+          <a href="/admin">Painel Admin</a>
         {% endif %}
-        <a href="/account/change-password">Minha Conta</a> &nbsp;·&nbsp;
+        <a href="/account/change-password">Minha Conta</a>
         <a href="/logout">Sair</a>
+      </nav>
       {% endif %}
     </div>
   </div>
