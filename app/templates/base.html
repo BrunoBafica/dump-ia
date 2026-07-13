@@ -16,13 +16,18 @@
     <div class="topbar-right">
       {% if request.session.get('username') %}
       <nav class="topbar-nav">
-        <span class="topbar-user">{{ request.session.get('username') }}</span>
-        <a href="/dashboard">Início</a>
-        {% if request.session.get('is_admin') %}
-          <a href="/admin">Painel Admin</a>
-        {% endif %}
-        <a href="/account/change-password">Minha Conta</a>
-        <a href="/logout">Sair</a>
+        <span class="topbar-user">
+          <span class="user-avatar">{{ request.session.get('username')[0]|upper }}</span>
+          {{ request.session.get('username') }}
+        </span>
+        <div class="topbar-links">
+          <a href="/dashboard">Início</a>
+          {% if request.session.get('is_admin') %}
+            <a href="/admin">Painel Admin</a>
+          {% endif %}
+          <a href="/account/change-password">Minha Conta</a>
+          <a href="/logout" class="topbar-logout">Sair</a>
+        </div>
       </nav>
       {% endif %}
     </div>
