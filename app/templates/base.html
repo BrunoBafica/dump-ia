@@ -15,8 +15,8 @@
     </a>
     <div class="topbar-right">
       {% if request.session.get('username') %}
-        <a href="/dashboard">início</a> &nbsp;·&nbsp;
-        {{ request.session.get('username') }} &nbsp;·&nbsp;
+      {{ request.session.get('username') }} &nbsp;·&nbsp;
+      <a href="/dashboard">Home</a> &nbsp;·&nbsp;
         {% if request.session.get('is_admin') %}
           <a href="/admin">painel admin</a> &nbsp;·&nbsp;
         {% endif %}
