@@ -8,7 +8,7 @@ class Settings:
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
     SESSION_SECRET: str = os.getenv("SESSION_SECRET", "dev-secret-change-me")
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./dumpai.db")
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./data/dumpai.db")
     QUESTIONS_PER_EVALUATION: int = int(os.getenv("QUESTIONS_PER_EVALUATION", "5"))
 
     # URL pública onde o app está acessível (usada nos links dos e-mails)

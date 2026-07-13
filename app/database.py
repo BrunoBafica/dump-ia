@@ -1,3 +1,5 @@
+import os
+
 from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.orm import sessionmaker, declarative_base
 
@@ -6,6 +8,13 @@ from app.config import settings
 connect_args = {}
 if settings.DATABASE_URL.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
+    # Garante que a pasta do arquivo .db existe (ex: "./data") antes de conectar.
+    # Sem isso, se alguém apontar o DATABASE_URL para uma pasta que não existe
+    # ainda, o SQLite falha silenciosamente ou cria o arquivo no lugar errado.
+    _sqlite_path = settings.DATABASE_URL.replace("sqlite:///", "", 1)
+    _sqlite_dir = os.path.dirname(_sqlite_path)
+    if _sqlite_dir:
+        os.makedirs(_sqlite_dir, exist_ok=True)
 
 engine = create_engine(settings.DATABASE_URL, connect_args=connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

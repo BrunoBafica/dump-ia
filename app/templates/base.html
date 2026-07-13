@@ -10,9 +10,12 @@
 </head>
 <body>
   <div class="topbar">
-    <div class="brand">dump<span style="color:var(--accent)">ai</span><span class="cursor"></span></div>
+    <a href="{{ '/dashboard' if request.session.get('username') else '/login' }}" class="brand" style="text-decoration:none;">
+      dump<span style="color:var(--accent)">ai</span><span class="cursor"></span>
+    </a>
     <div class="topbar-right">
       {% if request.session.get('username') %}
+        <a href="/dashboard">início</a> &nbsp;·&nbsp;
         {{ request.session.get('username') }} &nbsp;·&nbsp;
         {% if request.session.get('is_admin') %}
           <a href="/admin">painel admin</a> &nbsp;·&nbsp;
