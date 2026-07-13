@@ -53,24 +53,67 @@ a:hover { text-decoration: underline; }
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-.topbar-right { font-family: var(--mono); font-size: 0.85rem; color: var(--text-dim); }
+.topbar-right { font-size: 0.85rem; color: var(--text-dim); }
 
 .topbar-nav {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  row-gap: 6px;
+  gap: 14px 10px;
 }
-.topbar-nav > * { white-space: nowrap; }
-.topbar-nav a { color: var(--text-dim); }
-.topbar-nav a:hover { color: var(--accent); }
-.topbar-user { color: var(--text); }
-.topbar-nav > *:not(:first-child) { margin-left: 14px; position: relative; }
-.topbar-nav > *:not(:first-child)::before {
-  content: "·";
-  position: absolute;
-  left: -10px;
-  color: var(--border);
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding-right: 12px;
+  border-right: 1px solid var(--border);
+}
+.user-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.topbar-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.topbar-links a {
+  color: var(--text-dim);
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 0.82rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.topbar-links a:hover {
+  background: var(--bg-panel-raised);
+  color: var(--text);
+  text-decoration: none;
+}
+.topbar-links a.topbar-logout {
+  color: var(--danger);
+  margin-left: 6px;
+}
+.topbar-links a.topbar-logout:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
 }
 
 .container-narrow {
@@ -363,7 +406,20 @@ textarea { min-height: 130px; resize: vertical; }
   .topbar-right { width: 100%; }
   .topbar-nav {
     width: 100%;
-    row-gap: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .topbar-user {
+    border-right: none;
+    padding-right: 0;
+  }
+  .topbar-links {
+    width: 100%;
+    gap: 4px;
+  }
+  .topbar-links a {
+    padding: 8px 12px;
   }
 
   .container-narrow, .container-wide {
