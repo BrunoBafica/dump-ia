@@ -16,12 +16,12 @@
     <div class="topbar-right">
       {% if request.session.get('username') %}
       {{ request.session.get('username') }} &nbsp;·&nbsp;
-      <a href="/dashboard">Home</a> &nbsp;·&nbsp;
+      <a href="/dashboard">Início</a> &nbsp;·&nbsp;
         {% if request.session.get('is_admin') %}
-          <a href="/admin">painel admin</a> &nbsp;·&nbsp;
+          <a href="/admin">Painel Admin</a> &nbsp;·&nbsp;
         {% endif %}
-        <a href="/account/change-password">minha conta</a> &nbsp;·&nbsp;
-        <a href="/logout">sair</a>
+        <a href="/account/change-password">Minha Conta</a> &nbsp;·&nbsp;
+        <a href="/logout">Sair</a>
       {% endif %}
     </div>
   </div>
