@@ -255,7 +255,64 @@ def change_password_page(
     user: User = Depends(get_current_user),
 ):
     return templates.TemplateResponse(
-        "change_password.html", {"request": request, "error": None, "success": False}
+        "change_password.html",
+        {
+            "request": request,
+            "user": user,
+            "pw_error": None,
+            "pw_success": False,
+            "profile_error": None,
+            "profile_success": False,
+        },
+    )
+
+
+@router.post("/account/update-profile", response_class=HTMLResponse)
+def update_profile_submit(
+    request: Request,
+    background_tasks: BackgroundTasks,
+    username: str = Form(...),
+    email: str = Form(...),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    email_changed = email.strip().lower() != user.email.lower()
+
+    error = auth_service.update_user_credentials(db, user, new_username=username, new_email=email)
+
+    if error:
+        return templates.TemplateResponse(
+            "change_password.html",
+            {
+                "request": request,
+                "user": user,
+                "pw_error": None,
+                "pw_success": False,
+                "profile_error": error,
+                "profile_success": False,
+            },
+            status_code=400,
+        )
+
+    # Nome de usuário na sessão pode ter mudado — atualiza pra refletir na topbar
+    request.session["username"] = user.username
+
+    # Se o e-mail mudou, precisa confirmar de novo (update_user_credentials já
+    # marcou email_verified=False) — dispara um novo e-mail de confirmação.
+    if email_changed and settings.EMAIL_CONFIGURED:
+        token = auth_service.create_email_verification(db, user)
+        background_tasks.add_task(_send_verification_email_safe, user.email, user.username, token)
+
+    return templates.TemplateResponse(
+        "change_password.html",
+        {
+            "request": request,
+            "user": user,
+            "pw_error": None,
+            "pw_success": False,
+            "profile_error": None,
+            "profile_success": True,
+        },
     )
 
 
@@ -271,23 +328,52 @@ def change_password_submit(
     if not auth_service.verify_password(current_password, user.password_hash):
         return templates.TemplateResponse(
             "change_password.html",
-            {"request": request, "error": "Senha atual incorreta.", "success": False},
+            {
+                "request": request,
+                "user": user,
+                "pw_error": "Senha atual incorreta.",
+                "pw_success": False,
+                "profile_error": None,
+                "profile_success": False,
+            },
             status_code=400,
         )
     if new_password != new_password_confirm:
         return templates.TemplateResponse(
             "change_password.html",
-            {"request": request, "error": "As senhas novas não coincidem.", "success": False},
+            {
+                "request": request,
+                "user": user,
+                "pw_error": "As senhas novas não coincidem.",
+                "pw_success": False,
+                "profile_error": None,
+                "profile_success": False,
+            },
             status_code=400,
         )
     if len(new_password) < 6:
         return templates.TemplateResponse(
             "change_password.html",
-            {"request": request, "error": "A senha deve ter ao menos 6 caracteres.", "success": False},
+            {
+                "request": request,
+                "user": user,
+                "pw_error": "A senha deve ter ao menos 6 caracteres.",
+                "pw_success": False,
+                "profile_error": None,
+                "profile_success": False,
+            },
             status_code=400,
         )
 
     auth_service.change_password(db, user, new_password)
     return templates.TemplateResponse(
-        "change_password.html", {"request": request, "error": None, "success": True}
+        "change_password.html",
+        {
+            "request": request,
+            "user": user,
+            "pw_error": None,
+            "pw_success": True,
+            "profile_error": None,
+            "profile_success": False,
+        },
     )

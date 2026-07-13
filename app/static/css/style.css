@@ -55,6 +55,24 @@ a:hover { text-decoration: underline; }
 
 .topbar-right { font-family: var(--mono); font-size: 0.85rem; color: var(--text-dim); }
 
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+.topbar-nav > * { white-space: nowrap; }
+.topbar-nav a { color: var(--text-dim); }
+.topbar-nav a:hover { color: var(--accent); }
+.topbar-user { color: var(--text); }
+.topbar-nav > *:not(:first-child) { margin-left: 14px; position: relative; }
+.topbar-nav > *:not(:first-child)::before {
+  content: "·";
+  position: absolute;
+  left: -10px;
+  color: var(--border);
+}
+
 .container-narrow {
   max-width: 760px;
   margin: 60px auto;
@@ -323,4 +341,56 @@ textarea { min-height: 130px; resize: vertical; }
   color: var(--accent);
   text-align: center;
   margin-bottom: 16px;
+}
+
+/* --- Banner flexível (ex: aviso de e-mail pendente no dashboard) --- */
+.banner-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.banner-flex-form { margin: 0; flex-shrink: 0; }
+
+/* --- Responsivo (celular) --- */
+@media (max-width: 640px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 18px;
+  }
+  .topbar-right { width: 100%; }
+  .topbar-nav {
+    width: 100%;
+    row-gap: 8px;
+  }
+
+  .container-narrow, .container-wide {
+    padding: 0 14px;
+    margin-top: 32px;
+  }
+  .panel { padding: 20px; }
+
+  .lang-grid, .admin-progress-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+  .actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .banner-flex {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+  }
+  .banner-flex-form .btn { width: 100%; }
+
+  .admin-table { font-size: 0.8rem; }
+  .admin-table th, .admin-table td { padding: 8px 6px; }
 }
